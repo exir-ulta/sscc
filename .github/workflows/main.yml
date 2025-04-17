@@ -16,7 +16,7 @@ jobs:
         run: g++ scheduling.cpp -o scheduling.exe
 
       - name: Upload EXE artifact
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v3.1.2
         with:
           name: scheduling-exe
           path: scheduling.exe
