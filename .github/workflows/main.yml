@@ -9,14 +9,19 @@ jobs:
   build:
     runs-on: windows-latest
     steps:
-      - name: Checkout repo
+      - name: Checkout repository
         uses: actions/checkout@v3
 
-      - name: Compile the C++ code
+      - name: Set up MinGW
+        uses: egor-tensin/setup-mingw@v2
+        with:
+          platform: x64
+
+      - name: Compile C++ to EXE
         run: g++ scheduling.cpp -o scheduling.exe
 
-      - name: Upload EXE artifact
-        uses: actions/upload-artifact@f54a306b162e6b9a62d05e9d353f75f63b5388a9
+      - name: Upload the EXE
+        uses: actions/upload-artifact@v3
         with:
           name: scheduling-exe
           path: scheduling.exe
