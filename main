@@ -1,0 +1,130 @@
+#include <iostream>
+#include <vector>
+#include <algorithm>
+
+// Structure to represent a process
+struct Process {
+    int id;
+    int arrivalTime;
+    int burstTime;
+    int priority;
+};
+
+// Function to implement First Come First Serve (FCFS) scheduling
+void fcfs(std::vector<Process>& processes) {
+    int currentTime = 0;
+    for (auto& process : processes) {
+        if (process.arrivalTime > currentTime) {
+            currentTime = process.arrivalTime;
+        }
+        std::cout << "Process " << process.id << ": Waiting Time = " << currentTime - process.arrivalTime << ", Turnaround Time = " << process.burstTime + (currentTime - process.arrivalTime) << std::endl;
+        currentTime += process.burstTime;
+    }
+}
+
+// Function to implement Shortest Job First (SJF) scheduling
+void sjf(std::vector<Process>& processes) {
+    std::sort(processes.begin(), processes.end(), [](const Process& a, const Process& b) {
+        return a.burstTime < b.burstTime;
+    });
+
+    int currentTime = 0;
+    for (auto& process : processes) {
+        if (process.arrivalTime > currentTime) {
+            currentTime = process.arrivalTime;
+        }
+        std::cout << "Process " << process.id << ": Waiting Time = " << currentTime - process.arrivalTime << ", Turnaround Time = " << process.burstTime + (currentTime - process.arrivalTime) << std::endl;
+        currentTime += process.burstTime;
+    }
+}
+
+// Function to implement Round Robin (RR) scheduling
+void rr(std::vector<Process>& processes, int timeQuantum) {
+    int currentTime = 0;
+    while (true) {
+        bool allDone = true;
+        for (auto& process : processes) {
+            if (process.burstTime > 0) {
+                allDone = false;
+                if (process.arrivalTime > currentTime) {
+                    currentTime = process.arrivalTime;
+                }
+                int executedTime = std::min(timeQuantum, process.burstTime);
+                process.burstTime -= executedTime;
+                currentTime += executedTime;
+                if (process.burstTime == 0) {
+                    std::cout << "Process " << process.id << ": Waiting Time = " << currentTime - process.arrivalTime - executedTime << ", Turnaround Time = " << currentTime - process.arrivalTime << std::endl;
+                }
+            }
+        }
+        if (allDone) {
+            break;
+        }
+    }
+}
+
+// Function to implement Priority Scheduling
+void priorityScheduling(std::vector<Process>& processes) {
+    std::sort(processes.begin(), processes.end(), [](const Process& a, const Process& b) {
+        return a.priority < b.priority;
+    });
+
+    int currentTime = 0;
+    for (auto& process : processes) {
+        if (process.arrivalTime > currentTime) {
+            currentTime = process.arrivalTime;
+        }
+        std::cout << "Process " << process.id << ": Waiting Time = " << currentTime - process.arrivalTime << ", Turnaround Time = " << process.burstTime + (currentTime - process.arrivalTime) << std::endl;
+        currentTime += process.burstTime;
+    }
+}
+
+int main() {
+    int numProcesses;
+    std::cout << "Enter the number of processes: ";
+    std::cin >> numProcesses;
+
+    std::vector<Process> processes;
+    for (int i = 0; i < numProcesses; i++) {
+        Process process;
+        process.id = i + 1;
+        std::cout << "Enter arrival time for process " << process.id << ": ";
+        std::cin >> process.arrivalTime;
+        std::cout << "Enter burst time for process " << process.id << ": ";
+        std::cin >> process.burstTime;
+        std::cout << "Enter priority for process " << process.id << ": ";
+        std::cin >> process.priority;
+        processes.push_back(process);
+    }
+
+    int choice;
+    std::cout << "Choose a scheduling algorithm:" << std::endl;
+    std::cout << "1. First Come First Serve (FCFS)" << std::endl;
+    std::cout << "2. Shortest Job First (SJF)" << std::endl;
+    std::cout << "3. Round Robin (RR)" << std::endl;
+    std::cout << "4. Priority Scheduling" << std::endl;
+    std::cin >> choice;
+
+    switch (choice) {
+        case 1:
+            fcfs(processes);
+            break;
+        case 2:
+            sjf(processes);
+            break;
+        case 3: {
+            int timeQuantum;
+            std::cout << "Enter time quantum for Round Robin scheduling: ";
+            std::cin >> timeQuantum;
+            rr(processes, timeQuantum);
+            break;
+        }
+        case 4:
+            priorityScheduling(processes);
+            break;
+        default:
+            std::cout << "Invalid choice" << std::endl;
+    }
+
+    return 0;
+}
